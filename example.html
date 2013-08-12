@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>backbone.router.fsm</title>
+</head>
+<body>
+  <div id="wrapper">
+    <div id="container">
+      <div id="content">
+        <h1>Backbone Router FSM</h1>
+        <div class="console">state: <span id="state"></span></div>
+        <button data-state="st1">st1</button>
+        <button data-state="st2">st2</button>
+        <button data-state="st3">st3</button>
+      </div>
+    </div>
+  </div>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="./lib/underscore-min.js"></script>
+	<script src="./lib/backbone.js"></script>
+	<script src="./backbone.router.fsm.js"></script>
+  <script>
+    $(function() {
+        var $state = $('#state'),
+            $btn = $('button'),
+            default_state = 'st1';
+
+        $state.html('st1');
+        $btn.click(function(e) {
+            var $trg = $(e.target),
+                st = $trg.data('state');
+
+            $state.html(st);
+            location.hash = st;
+        });
+
+        var MyRouter = Backbone.FSMRouter.extend({
+            default_state: 'st1',
+            routes: {
+              st1: "st1",
+              st2: "st2",
+              st3: "st3"
+            },
+            st1_st2: function() {
+              console.log('st1_to_st2');
+            },
+            st2_st3: function() {
+              console.log('st2_to_st3');
+            },
+            st3_st1: function() {
+              console.log('st3_to_st1');
+            },
+            st1_st1: function() {
+              console.log('st1_to_st1');
+            },
+            st2_st2: function() {
+              console.log('st2_to_st2');
+            },
+            st3_st3: function() {
+              console.log('st3_to_st3');
+            },
+            st1_st3: function() {
+              console.log('st1_to_st3');
+            },
+            st2_st1: function() {
+              console.log('st2_to_st1');
+            },
+            st3_st2: function() {
+              console.log('st3_to_st2');
+            }
+        });
+        
+        router = new MyRouter();
+        Backbone.history.start();
+    });
+  </script>
+</body>
+</html>
+

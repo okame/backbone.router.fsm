@@ -39,8 +39,8 @@ Backbone.FSMRouter = Backbone.FSMRouter || {};
      * @param {Array} arguments for a method of prev_st to st.
      */
     function run(st, args) {
-        var from = this.st,
-            to = st;
+        var from = this.st || '',
+            to = st || '';
 
         callMethod.call(this, from, to, args);
         this.st = st;
@@ -55,7 +55,7 @@ Backbone.FSMRouter = Backbone.FSMRouter || {};
     function setMethod(from, to, cb) {
         var methods = this.methods;
 
-        if(!from || !to || !cb) {
+        if(_.isUndefined(from) || _.isUndefined(!to) || _.isUndefined(!cb)) {
             throw new Error('[FSM:setMethod] arguments required.');
         }
 
@@ -92,11 +92,11 @@ Backbone.FSMRouter = Backbone.FSMRouter || {};
      * --------------------------------- */
     function callMethod(from, to, args) {
         if(typeof this.methods[from] === 'undefined') {
-            console.debug('[FSM:callMethod] method for [from '+from+'] is undefined.');
+            console.info('[FSM:callMethod] method for [from '+from+'] is empty value.');
             return;
         }
         if(typeof this.methods[from][to] !== 'function') {
-            console.debug('[FSM:callMethod] method for [from '+from+' to '+to+'] is undefined.');
+            console.info('[FSM:callMethod] method for [from '+from+' to '+to+'] is empty.');
             return;
         }
 
@@ -128,27 +128,29 @@ Backbone.FSMRouter = Backbone.FSMRouter || {};
          * @override
          */
         _bindRoutes: function() {
-          if (!this.routes) return;
-          this.routes = _.result(this, 'routes');
-          var route, routes = _.keys(this.routes),
-              _route, _routes, cb;
+            if (!this.routes) return;
+            this.routes = _.result(this, 'routes');
+            var route, routes = _.keys(this.routes),
+                _route, _routes, cb, root, _root;
 
-          while ((route = routes.pop()) !== undefined) {
-            this.route(route, this.routes[route]);
-            this.on('route:'+route, _.bind(this.fsm.run, this.fsm, route));
-            _routes = _.keys(this.routes);
+            while ((route = routes.pop()) !== undefined) {
+                root = route.split('/')[0];
+                this.route(route, this.routes[route]);
+                this.on('route:'+root, _.bind(this.fsm.run, this.fsm, root));
+                _routes = _.keys(this.routes);
 
-            // 状態遷移によるcallbackの登録
-            while ((_route = _routes.pop()) !== undefined) {
-              cb = this[route+'_'+_route];
-              if(_.isFunction(cb)) {
-                this.fsm.setMethod(route, _route, cb);
-              }
+                // 状態遷移によるcallbackの登録
+                while ((_route = _routes.pop()) !== undefined) {
+                    _root = _route.split('/')[0];
+                    cb = this[root+'_'+_root];
+                    if(_.isFunction(cb)) {
+                      this.fsm.setMethod(root, _root, cb);
+                    }
+                }
             }
-          }
         }
     });
     
     ns.FSMRouter = FSMRouter;
 
-})(Backbone.Router);
+})(Backbone);

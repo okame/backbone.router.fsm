@@ -114,7 +114,7 @@ describe('[FSMRouter]', function() {
             };
             options.default_state = ST.ST1;
 
-            TestRouter = ns.Backbone.Router.FSMRouter.extend({
+            TestRouter = ns.Backbone.FSMRouter.extend({
                 default_state: 'st1',
                 routes: {
                     st1: "f1",
