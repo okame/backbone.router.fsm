@@ -1,0 +1,20 @@
+{
+  "name": "backbone.router.fsm",
+  "version": "0.0.0",
+  "description": "hoge",
+  "main": "backbone.router.fsm.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -r should"
+  },
+  "repository": "",
+  "keywords": [
+    "backbone",
+    "router",
+    "fsm"
+  ],
+  "author": "okame",
+  "license": "BSD"
+}
